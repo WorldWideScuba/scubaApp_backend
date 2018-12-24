@@ -7,8 +7,6 @@ dotenv.config();
 // postgres connection config
 const config = {
 	host: process.env.DBHOST,
-	// Do not hard code your username and password.
-	// Consider using Node environment variables.
 	user: process.env.DBUSERNAME,
 	password: process.env.DBPASSWORD,
 	database: 'atlas',

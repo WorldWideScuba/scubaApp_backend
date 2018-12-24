@@ -1,9 +1,9 @@
 import * as express from 'express';
-import * as logger from 'morgan';
-import * as bodyParser from 'body-parser';
+import { applyMiddleware } from './utils/index';
+import middleware from './middleware';
 import * as db from './db/index';
-import * as fs from 'fs';
 import Router from './routes/router';
+import router from './routes/router';
 
 
 class App {
@@ -13,18 +13,18 @@ class App {
 
 		constructor() {
 			this.express = express();
-			this.db = new db.Database();
-			this.middleware();
-			this.routes();
-			this.database();
+			applyMiddleware(middleware , this.express);
+			//this.db = new db.Database();
+			//this.routes();
+			//this.database();
 
 
 		}
 
 		private middleware(): void {
-			this.express.use(logger('dev'));
-			this.express.use(bodyParser.json());
-			this.express.use(bodyParser.urlencoded({ extended: false }));
+		//	this.express.use(logger('dev'));
+		//	this.express.use(bodyParser.json());
+		//	this.express.use(bodyParser.urlencoded({ extended: false }));
 		}
 
 		private database(): void {
