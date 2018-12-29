@@ -1,18 +1,16 @@
-// This will be our application entry. We'll setup our server here.
 import * as http from 'http';
 import * as debug from 'debug';
-//import {IDebugger} from 'debug';
 
-import App from '../server';  // The express app we just created
+import App from '../server';  
 
 debug('ts-express:server');
 
 const port = normalizePort(process.env.PORT || 8000);
 
-App.express.set('port', port);
+App.router.set('port', port);
 
 
-const server = http.createServer(App.express);
+const server = http.createServer(App.router);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

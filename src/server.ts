@@ -1,19 +1,32 @@
-import * as express from 'express';
-import { applyMiddleware } from './utils/index';
-import middleware from './middleware';
-import * as db from './db/index';
-import Router from './routes/router';
-import router from './routes/router';
+import * as express from "express";
+import * as db from "./db/index";
+import { applyMiddleware, applyRoutes } from "./utils/index";
+import middleware from "./middleware";
+import errorHandlers from "./middleware/errorHandlers";
+import Router from "./routes/router";
+import routes from "./services";
+
+process.on("uncaughtException", e => {
+	console.log(e);
+	process.exit(1);
+  });
+process.on("unhandledRejection", e => {
+	console.log(e);
+	process.exit(1);
+  });
+
 
 
 class App {
 
-		public express: express.Application;
+		public router: express.Application;
 		public db: db.Database;
 
 		constructor() {
-			this.express = express();
-			applyMiddleware(middleware , this.express);
+			this.router = express();
+			applyMiddleware(middleware , this.router);
+			applyRoutes(routes, this.router);
+			applyMiddleware(errorHandlers, this.router);
 			//this.db = new db.Database();
 			//this.routes();
 			//this.database();
@@ -22,7 +35,7 @@ class App {
 		}
 
 		private middleware(): void {
-		//	this.express.use(logger('dev'));
+		//	this.express.use(logger("dev"));
 		//	this.express.use(bodyParser.json());
 		//	this.express.use(bodyParser.urlencoded({ extended: false }));
 		}
@@ -32,16 +45,16 @@ class App {
 		}
 
 		private routes(): void {
-			Router.load( this.express, 'dist/server/controllers');
+			Router.load( this.router, "dist/server/controllers");
 
 
 			const router = express.Router();
 			// placeholder route handler
-			router.get('/', (req, res, next) => {
+			router.get("/", (req, res, next) => {
 
-				res.send('Welcome Home!!');
+				res.send("Welcome Home!!");
 			});
-			this.express.use('/', router);
+			this.router.use("/", router);
 
 		}
 

@@ -9,7 +9,7 @@ const config = {
 	host: process.env.DBHOST,
 	user: process.env.DBUSERNAME,
 	password: process.env.DBPASSWORD,
-	database: 'atlas',
+	database: process.env.DBNAME,
 	port: 5432,
 	ssl: true
 	};
