@@ -1,31 +1,31 @@
-import { Router, Request, Response, NextFunction } from "express";
+import {  NextFunction, Request, Response, Router  } from "express";
 
 type Wrapper = ((router: Router) => void);
 
 type Handler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
+	req: Request,
+	res: Response,
+	next: NextFunction,
 ) => Promise<void> | void;
 
-type Route = {
-  path: string;
-  method: string;
-  handler: Handler | Handler[];
-};
+interface IRoute {
+	path: string;
+	method: string;
+	handler: Handler | Handler[];
+}
 
 export const applyMiddleware = (
-  middleware: Wrapper[],
-  router: Router
+	middleware: Wrapper[],
+	router: Router,
 ) => {
-  for (const f of middleware) {
-    f(router);
-  }
+	for (const f of middleware) {
+		f(router);
+	}
 };
 
-export const applyRoutes = (routes: Route[], router: Router) => {
-  for (const route of routes) {
-    const { method, path, handler } = route;
-    (router as any)[method](path, handler);
-  }
+export const applyRoutes = (routes: IRoute[], router: Router) => {
+	for (const route of routes) {
+		const { method, path, handler } = route;
+		(router as any)[method](path, handler);
+	}
 };

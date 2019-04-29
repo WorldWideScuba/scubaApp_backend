@@ -1,6 +1,6 @@
 // const { Pool } = require('pg');
-import * as pg from 'pg';
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
+import * as pg from "pg";
 
 dotenv.config();
 
@@ -11,33 +11,31 @@ const config = {
 	password: process.env.DBPASSWORD,
 	database: process.env.DBNAME,
 	port: 5432,
-	ssl: true
+	ssl: true,
 	};
 
-export class Database {
+class Database {
 
-		pool: pg.Pool;
+	private pool: pg.Pool;
 
-		constructor() {
-
-			this.pool = new pg.Pool(config);
-
-		}
-
-		public open() {
-					this.pool.connect(function( err, client, done) {
-				if (err) {
-						console.log('not able to get connection ' + err);
-				}
-			} );
-		}
-
-		public query(text: string  , params: string[] , callback) {
-			return this.pool.query(text, params, callback);
-		}
-
-
+	constructor() {
+		this.pool = new pg.Pool(config);
 	}
 
-// var DB = new Database();
-// export default DB;
+	public open() {
+		this.pool.connect(( err, client, done) => {
+			if (err) {
+				console.log("not able to get connection " + err);
+			}
+		} );
+	}
+
+	public query(text: string  , params: string[] , callback) {
+		return this.pool.query(text, params, callback);
+	}
+
+}
+
+const atlas = new Database();
+atlas.open();
+export default { atlas };
