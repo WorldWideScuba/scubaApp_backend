@@ -33,10 +33,10 @@ public class MapDao extends SpringJdbcDao {
     }
 
      List<SiteCount> getSiteCountByCountry(String countryList){
-        String sql = "SELECT c.country_short_name, COALESCE(COUNT(d.dive_site_identifier), 0)\n" +
+        String sql = "SELECT c.country_short_name, COALESCE(COUNT(d.dive_site_identifier), 0) AS site_count\n" +
                     "FROM world.country c\n" +
                     "LEFT JOIN dive.dive_site d on c.country_code = d.dive_site_country_code\n" +
-                    "WHERE c.country_short_name in ('" + countryList + "')\n" +
+                    "WHERE c.country_short_name in (" + countryList + ")\n" +
                     "GROUP BY c.country_short_name";
          return getTemplate().query(sql, new BeanPropertyRowMapper<>(SiteCount.class));
      }

@@ -21,15 +21,15 @@ public class MapController {
         this.mapService = mapService;
     }
 
-    @GetMapping("/api/map/countrySite")
+    @GetMapping("/map/countrySite")
     public List<ScubaSiteInfo> getScubaSitesByCountry(
-            @RequestParam(value = "countryList", required = true) String countryList){
+            @RequestParam(value = "countryList") String countryList){
         return mapService.getScubaSitesByCountry(countryList);
     }
 
-    @GetMapping("/api/map/SiteCountByCountry")
+    @GetMapping("/map/SiteCountByCountry")
     public List<SiteCount> getSiteCountByCountry(
-            @RequestParam(value = "countryList", required = true) String countryList){
+            @RequestParam(value = "countryList") String countryList){
         return mapService.getSiteCountByCountry(countryList);
     }
 
