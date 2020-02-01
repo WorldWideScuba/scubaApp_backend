@@ -5,6 +5,7 @@ import java.util.List;
 import com.scubaworld.scubagear.map.MapService;
 import com.scubaworld.scubagear.representation.ScubaSiteInfo;
 import com.scubaworld.scubagear.representation.SiteCount;
+import com.scubaworld.scubagear.representation.countryInfo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,9 +30,16 @@ public class MapController {
 
     @GetMapping("/map/SiteCountByCountry")
     public List<SiteCount> getSiteCountByCountry(
-            @RequestParam(value = "countryList") String countryList){
-        return mapService.getSiteCountByCountry(countryList);
+            @RequestParam(required = false, value = "regionIDList") int[] regionIDList,
+            @RequestParam(required = false, value = "animalIDList") int[] animalIDList,
+            @RequestParam(required = false, value = "scubaIDList") int[] scubaIDList){
+        return mapService.getSiteCountByCountry(regionIDList, animalIDList, scubaIDList);
     }
-
+    @GetMapping("/map/CountryInfo")
+    public countryInfo getCountryInfo(
+            @RequestParam(required = true, value = "countryName") String country_short_name
+    ){
+        return mapService.getCountryInfo(country_short_name);
+    }
 
 }

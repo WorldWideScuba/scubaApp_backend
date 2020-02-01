@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.scubaworld.scubagear.representation.ScubaSiteInfo;
 import com.scubaworld.scubagear.representation.SiteCount;
+import com.scubaworld.scubagear.representation.countryInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,11 @@ public class MapService {
         return mapDao.getSitesByCountry(countryList);
     }
 
-    public List<SiteCount> getSiteCountByCountry(String countryList){
-        return mapDao.getSiteCountByCountry(countryList);
+    public List<SiteCount> getSiteCountByCountry(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
+        return mapDao.getSiteCountByCountry(regionIDList, animalIDList, scubaIDList);
+    }
+
+    public countryInfo getCountryInfo(String country_short_name){
+        return mapDao.getCountryInfo(country_short_name);
     }
 }
