@@ -20,11 +20,11 @@ public class MapService {
         this.mapDao = mapDao;
     }
 
-    public List<ScubaSiteInfo> getScubaSitesByCountry(String countryList){
-        return mapDao.getSitesByCountry(countryList);
+    public List<ScubaSiteInfo> getScubaSitesByZone(String zoneList){
+        return mapDao.getSitesByCountry(zoneList);
     }
 
-    public List<SiteCount> getSiteCountByCountry(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
+    public List<SiteCount> getSiteCountByZone(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
         return mapDao.getSiteCountByCountry(regionIDList, animalIDList, scubaIDList);
     }
 

@@ -23,17 +23,17 @@ public class MapController {
     }
 
     @GetMapping("/map/countrySite")
-    public List<ScubaSiteInfo> getScubaSitesByCountry(
-            @RequestParam(value = "countryList") String countryList){
-        return mapService.getScubaSitesByCountry(countryList);
+    public List<ScubaSiteInfo> getScubaSitesByZone(
+            @RequestParam(value = "zoneList") String zoneList){
+        return mapService.getScubaSitesByZone(zoneList);
     }
 
-    @GetMapping("/map/SiteCountByCountry")
-    public List<SiteCount> getSiteCountByCountry(
+    @GetMapping("/map/SiteCountByZone")
+    public List<SiteCount> getSiteCountByZone(
             @RequestParam(required = false, value = "regionIDList") int[] regionIDList,
             @RequestParam(required = false, value = "animalIDList") int[] animalIDList,
             @RequestParam(required = false, value = "scubaIDList") int[] scubaIDList){
-        return mapService.getSiteCountByCountry(regionIDList, animalIDList, scubaIDList);
+        return mapService.getSiteCountByZone(regionIDList, animalIDList, scubaIDList);
     }
     @GetMapping("/map/CountryInfo")
     public countryInfo getCountryInfo(

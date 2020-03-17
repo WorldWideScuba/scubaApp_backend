@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class SiteCount {
-    @JsonProperty("country_short_name")
-    private String country_short_name;
+    @JsonProperty("zone_short_name")
+    private String zone_short_name;
     @JsonProperty("site_count")
     private int site_count;
 }

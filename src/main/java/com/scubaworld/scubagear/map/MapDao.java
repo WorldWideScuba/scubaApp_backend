@@ -20,25 +20,25 @@ public class MapDao extends SpringJdbcDao {
         super(template);
     }
 
-    List<ScubaSiteInfo> getSitesByCountry(String countryList){
-        String sql = "SELECT d.dive_site_identifier, d.site_name, d.region_name, c.country_short_name, d.longitude, d.latitude,\n" +
+    List<ScubaSiteInfo> getSitesByCountry(String zoneList){
+        String sql = "SELECT d.dive_site_identifier, d.site_name, d.region_name, z.zone_short_name, d.longitude, d.latitude,\n" +
                 "    t.dive_type_name, string_agg(a.animal_name, ',') AS animal_list\n" +
                 "FROM dive.dive_site d  \n" +
                 "INNER JOIN dive.dive_type t on t.dive_type_id = d.dive_type_id\n" +
-                "INNER JOIN world.country c on c.country_code = d.dive_site_country_code\n" +
+                "INNER JOIN world.zone z on z.zone_id = d.dive_site_zone_id\n" +
                 "LEFT JOIN dive.dive_animal_map m on m.dive_site_id = d.dive_site_identifier\n" +
                 "LEFT JOIN dive.animal a on a.animal_id = m.animal_id\n" +
-                "WHERE c.country_short_name in ('" + countryList + "')\n" +
-                "GROUP BY d.dive_site_identifier, d.site_name, d.region_name, c.country_short_name, d.longitude, d.latitude,\n" +
+                "WHERE c.zone_short_name in ('" + zoneList + "')\n" +
+                "GROUP BY d.dive_site_identifier, d.site_name, d.region_name, z.zone_short_name, d.longitude, d.latitude,\n" +
                 "    t.dive_type_name";
         return getTemplate().query(sql, new BeanPropertyRowMapper<>(ScubaSiteInfo.class));
     }
 
      List<SiteCount> getSiteCountByCountry(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
-        String sql = "SELECT c.country_short_name, COALESCE(COUNT(DISTINCT d.dive_site_identifier), 0) AS site_count\n" +
+        String sql = "SELECT z.zone_short_name, COALESCE(COUNT(DISTINCT d.dive_site_identifier), 0) AS site_count\n" +
                     "FROM world.ui_subregion s\n" +
-                    "INNER JOIN world.country c on c.ui_subregion_ID = s.ui_subregion_ID\n" +
-                    "LEFT JOIN dive.dive_site d on c.country_code = d.dive_site_country_code\n" +
+                    "INNER JOIN world.zone z on z.ui_subregion_ID = s.ui_subregion_ID\n" +
+                    "LEFT JOIN dive.dive_site d on z.zone_id = d.dive_site_zone_id\n" +
                     "LEFT JOIN dive.dive_animal_map m on m.dive_site_id = d.dive_site_identifier\n" +
                     "WHERE 1=1\n";
         if(animalIDList != null){
@@ -54,7 +54,7 @@ public class MapDao extends SpringJdbcDao {
             sql += "AND s.ui_subregion_id in (" + region + ")\n";
         };
 
-        sql += "GROUP BY c.country_short_name";
+        sql += "GROUP BY z.zone_short_name";
 
         return getTemplate().query(sql, new BeanPropertyRowMapper<>(SiteCount.class));
      }
@@ -72,16 +72,16 @@ public class MapDao extends SpringJdbcDao {
      */
 
     countryInfo getCountryInfo(String country_name) {
-        String sql = "SELECT country_full_name, iso2, country_short_name, " +
+        String sql = "SELECT zone_full_name, iso2, zone_short_name, " +
                         "continent_name AS continent, ui_subregion_name AS subRegion,\n" +
                         "population, capitol, major_geography, predominant_language, " +
                         "driving_side, peak_tourist_season, " +
                         "best_time_to_dive, bad_time_to_go, bodies_of_water, " +
-                        "country_description\n" +
-                        "from world.country co\n" +
+                        "zone_description\n" +
+                        "from world.zone co\n" +
                         "inner join world.continent c on c.continent_id = co.continent_id \n" +
                         "inner join world.ui_subregion s on s.ui_subregion_id = co.ui_subregion_id\n" +
-                        "WHERE country_short_name = CAST(? AS VARCHAR)";
+                        "WHERE zone_short_name = CAST(? AS VARCHAR)";
         return queryAndMapObject(sql, countryInfo.class,country_name);
     }
 }
