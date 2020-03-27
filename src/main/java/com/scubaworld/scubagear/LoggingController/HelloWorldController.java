@@ -1,4 +1,4 @@
-package com.scubaworld.scubagear.controller;
+package com.scubaworld.scubagear.LoggingController;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

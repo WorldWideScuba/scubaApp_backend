@@ -3,6 +3,8 @@ package com.scubaworld.scubagear.map;
 import com.scubaworld.scubagear.map.MapDao;
 
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.scubaworld.scubagear.representation.ScubaSiteInfo;
 import com.scubaworld.scubagear.representation.SiteCount;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class MapService {
 
     private final MapDao mapDao;
+    Logger logger = LoggerFactory.getLogger(MapService.class);
 
     @Autowired
     public MapService(MapDao mapDao){
@@ -24,8 +27,8 @@ public class MapService {
         return mapDao.getSitesByCountry(zoneList);
     }
 
-    public List<SiteCount> getSiteCountByZone(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
-        return mapDao.getSiteCountByCountry(regionIDList, animalIDList, scubaIDList);
+    public List<SiteCount> getSiteCountByZone(String[] regionList, String[] animalList, String[] scubaList){
+        return mapDao.getSiteCountByZone(regionList, animalList, scubaList);
     }
 
     public countryInfo getCountryInfo(String country_short_name){

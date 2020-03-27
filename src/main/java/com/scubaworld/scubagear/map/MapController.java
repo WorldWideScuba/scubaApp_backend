@@ -22,18 +22,18 @@ public class MapController {
         this.mapService = mapService;
     }
 
-    @GetMapping("/map/countrySite")
+    /*@GetMapping("/map/countrySite")
     public List<ScubaSiteInfo> getScubaSitesByZone(
             @RequestParam(value = "zoneList") String zoneList){
         return mapService.getScubaSitesByZone(zoneList);
-    }
+    }*/
 
     @GetMapping("/map/SiteCountByZone")
     public List<SiteCount> getSiteCountByZone(
-            @RequestParam(required = false, value = "regionIDList") int[] regionIDList,
-            @RequestParam(required = false, value = "animalIDList") int[] animalIDList,
-            @RequestParam(required = false, value = "scubaIDList") int[] scubaIDList){
-        return mapService.getSiteCountByZone(regionIDList, animalIDList, scubaIDList);
+            @RequestParam(required = false, value = "regionList") String[] regionList,
+            @RequestParam(required = false, value = "animalList") String[] animalList,
+            @RequestParam(required = false, value = "scubaList") String[] scubaList){
+        return mapService.getSiteCountByZone(regionList, animalList, scubaList);
     }
     @GetMapping("/map/CountryInfo")
     public countryInfo getCountryInfo(

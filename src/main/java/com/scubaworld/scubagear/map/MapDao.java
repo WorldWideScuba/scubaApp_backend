@@ -8,17 +8,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Repository
 public class MapDao extends SpringJdbcDao {
+
+    Logger logger = LoggerFactory.getLogger(MapDao.class);
 
     @Autowired
     MapDao(JdbcTemplate template){
         super(template);
     }
+
+    Function<String, String> addQuotes = s -> "'" + s + "'";
 
     List<ScubaSiteInfo> getSitesByCountry(String zoneList){
         String sql = "SELECT d.dive_site_identifier, d.site_name, d.region_name, z.zone_short_name, d.longitude, d.latitude,\n" +
@@ -34,28 +42,37 @@ public class MapDao extends SpringJdbcDao {
         return getTemplate().query(sql, new BeanPropertyRowMapper<>(ScubaSiteInfo.class));
     }
 
-     List<SiteCount> getSiteCountByCountry(int[] regionIDList, int[] animalIDList, int[] scubaIDList){
-        String sql = "SELECT z.zone_short_name, COALESCE(COUNT(DISTINCT d.dive_site_identifier), 0) AS site_count\n" +
-                    "FROM world.ui_subregion s\n" +
-                    "INNER JOIN world.zone z on z.ui_subregion_ID = s.ui_subregion_ID\n" +
-                    "LEFT JOIN dive.dive_site d on z.zone_id = d.dive_site_zone_id\n" +
-                    "LEFT JOIN dive.dive_animal_map m on m.dive_site_id = d.dive_site_identifier\n" +
-                    "WHERE 1=1\n";
-        if(animalIDList != null){
-            String animal = Arrays.toString(animalIDList).replaceAll("\\[|\\]", "");
-            sql += "AND m.animal_id in (" + animal + ")\n";
+     List<SiteCount> getSiteCountByZone(String[] regionList, String[] animalList, String[] scubaList){
+        String sql = "SELECT z.zone_short_name, COALESCE(dives.site_count, 0) as site_count " +
+                "FROM world.zone z " +
+                "LEFT JOIN( " +
+                "   SELECT z.zone_short_name as zone_short_name, COALESCE(COUNT(DISTINCT d.dive_site_identifier), 0) AS site_count " +
+                "   FROM world.zone z\n" +
+                "   LEFT JOIN world.ui_subregion s on z.ui_subregion_ID = s.ui_subregion_ID " +
+                "   LEFT JOIN dive.dive_site d on z.zone_id = d.dive_site_zone_id " +
+                "   LEFT JOIN dive.dive_animal_map m on m.dive_site_id = d.dive_site_identifier " +
+                "   WHERE 1=1 ";
+        if(animalList != null){
+            String animal = Arrays.stream(animalList)
+                    .map(addQuotes)
+                    .collect(Collectors.joining(", "));
+            sql += "AND m.animal_name in (" + animal + ") ";
         };
-        if(scubaIDList != null){
-            String scuba = Arrays.toString(scubaIDList).replaceAll("\\[|\\]", "");
-            sql += "AND d.dive_type_id in (" + scuba + ")\n";
+        if(scubaList != null){
+            String scuba = Arrays.stream(scubaList)
+                    .map(addQuotes)
+                    .collect(Collectors.joining(", "));
+            sql += "AND d.dive_type_name in (" + scuba + ") ";
         };
-        if(regionIDList != null){
-            String region = Arrays.toString(regionIDList).replaceAll("\\[|\\]", "");
-            sql += "AND s.ui_subregion_id in (" + region + ")\n";
+        if(regionList != null){
+            String region = Arrays.stream(regionList)
+                    .map(addQuotes)
+                    .collect(Collectors.joining(", "));
+            sql += "AND s.ui_subregion_name in (" + region + ") ";
         };
 
-        sql += "GROUP BY z.zone_short_name";
-
+        sql +=  "GROUP BY z.zone_short_name " +
+                ") dives on dives.zone_short_name = z.zone_short_name";
         return getTemplate().query(sql, new BeanPropertyRowMapper<>(SiteCount.class));
      }
     /*List<ScubaSiteInfo> getSitesByContinent(){
